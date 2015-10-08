@@ -11,6 +11,7 @@
   "dependencies": {
     "brfs": "^1.4.0",
     "csscolorparser": "^1.0.2",
+    "earcut": "^2.0.3",
     "envify": "^3.4.0",
     "feature-filter": "^1.0.3",
     "geojson-vt": "^2.1.0",
@@ -38,7 +39,7 @@
     "eslint": "^1.5.0",
     "eslint-config-mourner": "^1.0.0",
     "istanbul": "^0.4.1",
-    "mapbox-gl-test-suite": "mapbox/mapbox-gl-test-suite#09f6c89fa6552a2953e4903afd72dd27239217d2",
+    "mapbox-gl-test-suite": "mapbox/mapbox-gl-test-suite#ff125d2565a7035426eacc22ae630185b6acd33a",
     "prova": "^2.1.2",
     "sinon": "^1.15.4",
     "st": "^1.0.0",
@@ -70,6 +71,6 @@
     "production": "browserify js/mapbox-gl.js --debug --transform unassertify --plugin [minifyify --map mapbox-gl.js.map --output dist/mapbox-gl.js.map] --standalone mapboxgl > dist/mapbox-gl.js",
     "prepublish": "npm run build && npm run production",
     "cov": "istanbul cover prova test/js/*/*.js test/render.test.js -x js/lib/debugtext.js",
-    "docs": "documentation --github --format html --theme ./docs/_theme --output docs/api/"
+    "docs": "documentation --github --format html --theme ./docs/_theme --output docs/api"
   }
 }
