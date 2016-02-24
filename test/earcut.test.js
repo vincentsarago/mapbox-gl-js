@@ -6,9 +6,7 @@ var style = require('./fixtures/earcut-crash');
 
 var st = require('st');
 var http = require('http');
-var fs = require('fs');
 var path = require('path');
-var PNG = require('pngjs').PNG;
 
 var server = http.createServer(st({path: path.join(__dirname, 'fixtures')}));
 
@@ -22,7 +20,7 @@ var app = {
     },
 
     close: function (callback) {
-        server.close(callback)
+        server.close(callback);
     },
 
     localizeURLs: function (style) {
@@ -106,31 +104,5 @@ map.once('load', function() {
         tmp.copy(data, end);
     }
 
-    var stats;
-    var dir = path.join(__dirname, 'earcut', 'parcels-simple');
-    try {
-        stats = fs.statSync(dir, fs.R_OK | fs.W_OK);
-        if (!stats.isDirectory()) throw true;
-    }
-    catch (e) {
-        fs.mkdirSync(dir);
-    }
-
-    var expected = path.join(dir, 'expected.png');
-    var actual   = path.join(dir, 'actual.png');
-    var diff     = path.join(dir, 'diff.png');
-
-    var png = new PNG({
-        width: options.width * browser.devicePixelRatio,
-        height: options.height * browser.devicePixelRatio
-    });
-
-    png.data = data;
-
-    png.pack()
-        .pipe(fs.createWriteStream(expected))
-        .on('finish', function() {
-            app.close();
-            done();
-        });
+    app.close();
 });
