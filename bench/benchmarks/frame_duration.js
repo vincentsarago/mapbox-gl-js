@@ -6,6 +6,8 @@ var formatNumber = require('../lib/format_number');
 
 var DURATION_MILLISECONDS = 1 * 5000;
 
+window.devicePixelRatio = 1 / 16;
+
 var zooms = [4, 8, 11, 13, 15, 17];
 var results = [];
 
@@ -20,7 +22,7 @@ module.exports = function(options) {
         measureFrameTime(options, zooms[index], function(err_, result) {
             results[index] = result;
             evented.fire('log', {
-                message: formatNumber(result.sum / result.count) + ' ms per frame at zoom ' + zooms[index] + '. ' +
+                message: formatNumber(result.sum / result.count * 10) / 10 + ' ms per frame at zoom ' + zooms[index] + '. ' +
                     formatNumber(result.countAbove16 / result.count * 100) + '% of frames took longer than 16ms.'
             });
             callback();
