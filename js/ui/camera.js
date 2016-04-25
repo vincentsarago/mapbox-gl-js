@@ -290,18 +290,49 @@ util.extend(Camera.prototype, /** @lends Map.prototype */{
         }, options);
 
         bounds = LngLatBounds.convert(bounds);
-
         var offset = Point.convert(options.offset),
-            tr = this.transform,
-            nw = tr.project(bounds.getNorthWest()),
-            se = tr.project(bounds.getSouthEast()),
-            size = se.sub(nw),
-            scaleX = (tr.width - options.padding * 2 - Math.abs(offset.x) * 2) / size.x,
-            scaleY = (tr.height - options.padding * 2 - Math.abs(offset.y) * 2) / size.y;
+	        tr = this.transform,
+	        nw = tr.project(bounds.getNorthWest()),
+	        se = tr.project(bounds.getSouthEast()),
+	        size = se.sub(nw),
+	        bx = tr.width,
+	        by = tr.height;
+	
+	    if (!options.hasOwnProperty('bearing')){
+	        options.bearing = 0;
+	    }
+	
+	    if (options.bearing !== 0){
+	        var angle = Math.abs(options.bearing) * Math.PI / 180;
+	
+	        if (options.bearing < -90){
+	            angle = Math.abs(options.bearing + 180) * Math.PI / 180;
+	        }
+	        if (options.bearing > 90){
+	            angle = Math.abs(options.bearing - 180) * Math.PI / 180;
+	        }
+	        bx = Math.abs(parseInt(tr.width * Math.cos(angle) + tr.height * Math.sin(angle)));
+	        by = Math.abs(parseInt(tr.width * Math.sin(angle) + tr.height * Math.cos(angle)));
+	    }
+	
+	    var scaleX = (bx - options.padding * 2 - Math.abs(offset.x) * 2) / size.x,
+	        scaleY = (by - options.padding * 2 - Math.abs(offset.y) * 2) / size.y;
+	
+	    options.center = tr.unproject(nw.add(se).div(2));
+	    options.zoom = Math.min(tr.scaleZoom(tr.scale * Math.min(scaleX, scaleY)), options.maxZoom);
+	    options.bearing = 0;
 
-        options.center = tr.unproject(nw.add(se).div(2));
-        options.zoom = Math.min(tr.scaleZoom(tr.scale * Math.min(scaleX, scaleY)), options.maxZoom);
-        options.bearing = 0;
+//        var offset = Point.convert(options.offset),
+//            tr = this.transform,
+//            nw = tr.project(bounds.getNorthWest()),
+//            se = tr.project(bounds.getSouthEast()),
+//            size = se.sub(nw),
+//            scaleX = (tr.width - options.padding * 2 - Math.abs(offset.x) * 2) / size.x,
+//            scaleY = (tr.height - options.padding * 2 - Math.abs(offset.y) * 2) / size.y;
+//
+//        options.center = tr.unproject(nw.add(se).div(2));
+//        options.zoom = Math.min(tr.scaleZoom(tr.scale * Math.min(scaleX, scaleY)), options.maxZoom);
+//        options.bearing = 0;
 
         return options.linear ?
             this.easeTo(options, eventData) :
